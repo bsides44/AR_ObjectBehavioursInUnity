@@ -1,44 +1,30 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
-
-    // Rigidbody rb = GetComponent<Rigidbody>(); <- import component inyo rb variable
-	// Barbarian.animation.Mean
 
 public class NewBehaviourScript : MonoBehaviour {
-	//this is a string variable defined in unity in the inspector pane. public means you can see it in the unity inspector
-// public string url = "http://api.wunderground.com/api/d5a02b585b94a99a/conditions/q/New_Zealand/Wellington.json";
-	public Animator ani;
+	public RootObject rootObject;
+	 = new RootObject();
+	public User user;
+	public Animator ani; 
 	public string myName;
-	// Use this for initialization, ie componentDidMount. Debug.Log is console.log (Window > console)
+
+	private const string URL = "http://api.wunderground.com/api/d5a02b585b94a99a/conditions/q/New_Zealand/Wellington.json";
+
 	void Start () {
 		Debug.Log("Here I am ");
-		StartCoroutine(GetWeather());
-	}
-	IEnumerator GetWeather() {
-		UnityWebRequest www = UnityWebRequest.Get("http://api.wunderground.com/api/d5a02b585b94a99a/conditions/q/New_Zealand/Wellington.json");
-		// using (WWW www = new WWW(url))
-        // {
-            yield return www.SendWebRequest();
- 
-        if(www.isNetworkError || www.isHttpError) {
-            Debug.Log(www.error);
-        }
-        else {
-            // Show results as text
-            Debug.Log(www.downloadHandler.text);
- 
-            // Or retrieve results as binary data
-            byte[] results = www.downloadHandler.data;
-        }
-            // Renderer renderer = GetComponent<Renderer>();
-            // renderer.material.mainTexture = www.texture;
-        // }
-
-		ani = GetComponent<Animator>();
+		StartCoroutine(LoadWind());
 	}
 
+	IEnumerator LoadWind() {
+		WWW www = new WWW("http://api.wunderground.com/api/d5a02b585b94a99a/conditions/q/New_Zealand/Wellington.json");
+		yield return www;
+		Debug.Log(www.text);
+		user = JsonUtility.FromJson<User>(www.text);
+		Debug.Log(user); 
+	}
+
+// set up unity debugger
+//regex if desperate
 
 	// Update is called once per frame    
     void Update() {
