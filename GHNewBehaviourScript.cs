@@ -12,52 +12,68 @@ public class NewBehaviourScript : MonoBehaviour {
 	public string myName;
 	public string weatherString;
 	public Match match;
-	public object wind_dir;
-	public object wind_kph;
-
-	
+	public object dir_obj;
+	public string wind_kph;
+	public object dirLettersObj;
+	public string dirLettersString;
+	public object kph_obj;
+	public string wind_dir;
+	public object kphNumsObj;
+	public string kphNumsString;
+	public int kphNumsInt;
+	public string[] kphSplit;
 
 	private const string URL = "http://api.wunderground.com/api/d5a02b585b94a99a/conditions/q/New_Zealand/Wellington.json";
 
 	void Start () {
 		Debug.Log("Here I am ");
 		StartCoroutine(LoadWind());
+
+		if (kphNumsInt> 10) {
+  	ani.SetTrigger("Run");
+  }
+  		if (kphNumsInt< 10) {
+  	ani.SetTrigger("Walk");
+  }
+  		if (dirLettersString.Contains("S")) {
+  	ani.SetTrigger("Cry");
+  }
+  		if (dirLettersString.Contains("N")) {
+  	ani.SetTrigger("Wink");
+  }
 	}
 
-// \"wind_dir\":\".*?"
 	IEnumerator LoadWind() {
-		var windDirRegex = "(\"wind_dir\":\".*?\\w\\b\\b\\W)";
-		var windKphRegex = "(\"wind_kph\":\\.*?\\d.\\d)";
+		var windDirRegex = "(\"wind_dir\":\".*?\\w??\\W)";
+		var windKphRegex = "(\"wind_kph\":\\d+.\\d)";
+		var dirRegex = "([NESW])";
+		var kphRegex = "(\\d+(?:\\D\\d))"; 
+
 		WWW www = new WWW("http://api.wunderground.com/api/d5a02b585b94a99a/conditions/q/New_Zealand/Wellington.json");
 		yield return www;
 		// current_observation = JsonUtility.FromJson<CurrentObservation>(www.text);
 		weatherString = www.text;
-		Debug.Log(current_observation); 
+
 		match = Regex.Match(weatherString, windDirRegex);
-		wind_dir = match;
-		Debug.Log(wind_dir);
+		dir_obj = match;
+		wind_dir = dir_obj.ToString();
+		match = Regex.Match(wind_dir, dirRegex);
+		dirLettersObj = match;
+		dirLettersString = dirLettersObj.ToString();
+
 		match = Regex.Match(weatherString, windKphRegex);
-		wind_kph = match;
-		Debug.Log(wind_kph);
+		kph_obj = match;
+		wind_kph = kph_obj.ToString();
+		match = Regex.Match(wind_kph, kphRegex);
+		kphNumsObj = match;
+		kphNumsString = kphNumsObj.ToString();
+		kphSplit = kphNumsString.Split('.');
+		kphNumsInt = int.Parse(kphSplit[0]);
 
 	}
-
-// set up unity debugger
-//regex if desperate
-
-	// Update is called once per frame    
-    void Update() {
-		if (Input.GetKeyDown(KeyCode.A)) {
-  	ani.SetTrigger("RoundKick");
-  }
-  		if (Input.GetKeyDown(KeyCode.Q)) {
-  	ani.SetTrigger("Mean");
-  }
-  		if (Input.GetKeyDown(KeyCode.Z)) {
-  	ani.SetTrigger("Wink");
-  }
-  		if (Input.GetKeyDown(KeyCode.W)) {
-  	ani.SetTrigger("Run");
-  }
-    }
 }
+
+// Update is called once per frame    
+//     void Update() {
+
+// }
