@@ -4,7 +4,7 @@ using UnityEngine;
 public class NewBehaviourScript : MonoBehaviour {
 	public RootObject rootObject;
 	 = new RootObject();
-	public User user;
+	public CurrentObservation current_observation;
 	public Animator ani; 
 	public string myName;
 
@@ -19,8 +19,8 @@ public class NewBehaviourScript : MonoBehaviour {
 		WWW www = new WWW("http://api.wunderground.com/api/d5a02b585b94a99a/conditions/q/New_Zealand/Wellington.json");
 		yield return www;
 		Debug.Log(www.text);
-		user = JsonUtility.FromJson<User>(www.text);
-		Debug.Log(user); 
+		rootObject = JsonUtility.FromJson<CurrentObservation>(www.text);
+		Debug.Log(rootObject.current_observation.wind_dir); 
 	}
 
 // set up unity debugger
